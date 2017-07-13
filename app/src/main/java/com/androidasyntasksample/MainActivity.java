@@ -4,12 +4,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,11 +22,14 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
 public class MainActivity extends AppCompatActivity {
-
+TextView demo;
+    TextView location;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        demo = (TextView) findViewById(R.id.players);
+        location = (TextView) findViewById(R.id.location);
         AsynTaskSample sample = new AsynTaskSample();
         sample.execute();
     }
@@ -45,6 +50,15 @@ public class MainActivity extends AppCompatActivity {
             System.out.println(result);
             try {
                 JSONObject jsonObject = new JSONObject(result);
+                System.out.print(jsonObject.toString());
+                JSONObject gameStat = jsonObject.getJSONObject("game_stat");
+                demo.setText(gameStat.getString("now_playing"));
+
+                JSONArray enemies = jsonObject.getJSONArray("enemies");
+                for (int i = 0; i < enemies.length(); i++) {
+                    Log.d("Name", enemies.getJSONObject(i).getString("name"));
+                }
+
             }catch (JSONException e) {
                 e.printStackTrace();
             }
